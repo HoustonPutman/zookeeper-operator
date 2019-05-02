@@ -218,7 +218,11 @@ func (in *ZookeeperClusterSpec) DeepCopyInto(out *ZookeeperClusterSpec) {
 		copy(*out, *in)
 	}
 	in.Pod.DeepCopyInto(&out.Pod)
-	in.PersistentVolumeClaimSpec.DeepCopyInto(&out.PersistentVolumeClaimSpec)
+	if in.PersistentVolumeClaimSpec != nil {
+		in, out := &in.PersistentVolumeClaimSpec, &out.PersistentVolumeClaimSpec
+		*out = new(v1.PersistentVolumeClaimSpec)
+		(*in).DeepCopyInto(*out)
+	}
 	out.Conf = in.Conf
 	return
 }

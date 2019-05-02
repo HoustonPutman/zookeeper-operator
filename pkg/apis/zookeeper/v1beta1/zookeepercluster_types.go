@@ -68,7 +68,7 @@ type ZookeeperClusterSpec struct {
 	// PersistentVolumeClaimSpec is the spec to describe PVC for the container
 	// This field is optional. If no PVC spec, stateful containers will use
 	// emptyDir as volume.
-	PersistentVolumeClaimSpec v1.PersistentVolumeClaimSpec `json:"persistence,omitempty"`
+	PersistentVolumeClaimSpec *v1.PersistentVolumeClaimSpec `json:"persistence,omitempty"`
 
 	// Conf is the zookeeper configuration, which will be used to generate the
 	// static zookeeper configuration. If no configuration is provided required
@@ -121,15 +121,19 @@ func (s *ZookeeperClusterSpec) withDefaults(z *ZookeeperCluster) (changed bool) 
 	if s.Pod.withDefaults(z) {
 		changed = true
 	}
-	s.PersistentVolumeClaimSpec.AccessModes = []v1.PersistentVolumeAccessMode{
-		v1.ReadWriteOnce,
-	}
-	if len(s.PersistentVolumeClaimSpec.Resources.Requests) == 0 {
-		s.PersistentVolumeClaimSpec.Resources.Requests = v1.ResourceList{
-			v1.ResourceStorage: resource.MustParse("20Gi"),
+
+	if s.PersistentVolumeClaimSpec != nil {
+		s.PersistentVolumeClaimSpec.AccessModes = []v1.PersistentVolumeAccessMode{
+			v1.ReadWriteOnce,
 		}
-		changed = true
+		if len(s.PersistentVolumeClaimSpec.Resources.Requests) == 0 {
+			s.PersistentVolumeClaimSpec.Resources.Requests = v1.ResourceList{
+				v1.ResourceStorage: resource.MustParse("20Gi"),
+			}
+			changed = true
+		}
 	}
+
 	return changed
 }
 

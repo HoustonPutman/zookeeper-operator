@@ -36,6 +36,9 @@ var _ = Describe("ZookeeperCluster Types", func() {
 			ObjectMeta: metav1.ObjectMeta{
 				Name: "example",
 			},
+			Spec: v1beta1.ZookeeperClusterSpec{
+				PersistentVolumeClaimSpec: &corev1.PersistentVolumeClaimSpec{},
+			},
 		}
 	})
 
@@ -176,7 +179,7 @@ var _ = Describe("ZookeeperCluster Types", func() {
 		})
 
 		Context("PersistentVoluemClaim Spec", func() {
-			var p corev1.PersistentVolumeClaimSpec
+			var p *corev1.PersistentVolumeClaimSpec
 
 			BeforeEach(func() {
 				p = z.Spec.PersistentVolumeClaimSpec
